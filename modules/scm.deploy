@@ -1,0 +1,45 @@
+#!/usr/bin/make -f
+
+.PHONY: clone
+clone: PREFIX=$(CLONE_BASE_DIR)/$(CLONEDIR)$(HOSTDIR)
+clone: HOSTS=$(server_clone)
+clone: build test archive _check_tag
+	for i in $(HOSTS); do \
+		echo "installing to clone on $$i:$(PREFIX) as $(HOSTUSER)"; \
+		cat $(ARCHIVE) | $(SSH) $$i $(SUDO) -u $(HOSTUSER) $(TAR) zxf - -C $(PREFIX) $(TAR_X_FLAGS); \
+	done
+
+.PHONY: live
+live: PREFIX=$(HOSTDIR)
+live: HOSTS=localhost
+live: build test archive
+	for i in $(HOSTS); do \
+		echo "deploying to $$i:$(PREFIX) as $(HOSTUSER)"; \
+		cat $(ARCHIVE) | $(SSH) $$i $(SUDO) -u $(HOSTUSER) $(TAR) zxf - -C $(PREFIX) $(TAR_X_FLAGS); \
+	done
+
+.PHONY: live_%
+live_%: PREFIX=$(HOSTDIR)
+live_%: HOSTS=$(server_$*)
+live_%: build test archive
+	for i in $(HOSTS); do \
+		echo "deploying to $$i:$(PREFIX) as $(HOSTUSER)"; \
+		cat $(ARCHIVE) | $(SSH) $$i $(SUDO) -u $(HOSTUSER) $(TAR) zxf - -C $(PREFIX) $(TAR_X_FLAGS); \
+	done
+
+.PHONY: _check_tag
+_check_tag: build test archive
+ifndef NO_TAG
+	echo "checking to see if this version is clean and tagged"
+	if test $(DIRTY) -eq 1; then \
+		echo "git repository is unclean, thus no matching tag: use 'NO_TAG=1' to force deployment to clone"; \
+		return 1; \
+	fi
+	$(GIT) describe --tags --exact-match; \
+	if test $$? -ne 0; then \
+		echo "this revision is not tagged: use 'NO_TAG=1' to force deployment to clone"; \
+		return 1; \
+	fi
+else
+	echo "not checking tag before deploying"
+endif

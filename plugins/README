@@ -1,0 +1,4 @@
+Anything put in here that is named scm.*.plugin will be automatically included
+by the scm Makefiles. The best way to use this ability is to implement some
+sort of before/after hook for one of the stages to happen automatically. For
+example, a plugin to automatically fix the shebang line or something.

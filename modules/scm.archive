@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+.PHONY: archive
+archive: build test pre_archive_hook _internal_archive post_archive_hook
+	echo "finished running $@"
+
+.PHONY: pre_archive_hook
+pre_archive_hook:: build test
+
+.PHONY: _internal_archive
+_internal_archive: pre_archive_hook
+	mkdir -p $(ARCHIVE_DIR)
+	$(TAR) czf $(ARCHIVE) -C $(RELEASE_DIR) $(TAR_C_FLAGS) .
+
+.PHONY: post_archive_hook
+post_archive_hook:: _internal_archive

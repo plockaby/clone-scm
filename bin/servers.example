@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+
+server_foo	= foo.example.com
+server_bar	= bar.example.com
+
+# this is to deploy to the clone server
+server_clone	= clone.example.com

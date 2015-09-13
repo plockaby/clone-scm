@@ -1,0 +1,61 @@
+#!/usr/bin/make -f
+
+# options for make
+# WARNING: do NOT enable parallelism with the -j option
+# it will seriously break everything
+ifdef DEBUG
+MAKEFLAGS="-S -r"
+else
+MAKEFLAGS="-S -s -r"
+endif
+
+# Root directory that all scm generated content should be put in. Some content
+# from build systems will place content outside of this directory
+CONTAINMENT_DIR=$(CURDIR)/.scm
+
+# build of content for testing, archive, deployment
+RELEASE_DIR=$(CONTAINMENT_DIR)/release
+
+# temporary directory space
+TEMP_DIR=$(CONTAINMENT_DIR)/tmp
+
+# output from testing
+TEST_DIR=$(CONTAINMENT_DIR)/test
+
+# archive of the built content
+ARCHIVE_DIR=$(CONTAINMENT_DIR)/archive
+
+# holds a copy of the repository for building things
+BUILD_DIR=$(CONTAINMENT_DIR)/build
+
+# tool name and archive name
+PROJECT_NAME?=$(notdir $(CURDIR))
+
+# where git starts out
+GIT_ROOT=$(shell $(GIT) rev-parse --show-toplevel)
+
+# automated versioning information
+ifeq ($(shell ls $(GIT_ROOT)/.git/refs/heads/ | wc -l | tr -d ' '),0)
+    REPO_VERSION='HEAD'
+    VPATH='HEAD'
+else
+    REPO_VERSION=$(shell $(GIT) describe --always --tags)
+    VPATH=$(shell $(GIT) rev-parse --abbrev-ref HEAD)
+endif
+ifneq ($(shell $(GIT) status -s),)
+    REPO_SUFFIX=-dirty
+    DIRTY=1
+else
+    REPO_SUFFIX=
+    DIRTY=0
+endif
+
+FULL_VERSION=$(REPO_VERSION)$(REPO_SUFFIX)
+ARCHIVE_VERSION=version-$(FULL_VERSION)
+ARCHIVE_FILE=$(PROJECT_NAME)-$(ARCHIVE_VERSION).tar.gz
+ARCHIVE=$(ARCHIVE_DIR)/$(ARCHIVE_FILE)
+
+# default flags
+TAR_C_FLAGS?=-p
+TAR_X_FLAGS?=-p --no-same-owner --overwrite-dir
+RSYNC_FLAGS?=-a --exclude=.git --exclude=.gitignore --exclude-from=.gitignore

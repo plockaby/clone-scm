@@ -1,0 +1,7 @@
+You can also plop things in here that will be used to implement certain types
+of actions. There is an example file in here called copy.makefile that
+implements a copy action. You can use it by including it in your .scmrc file
+and then things will be released using that action. You can write your own
+actions like one to deploy Perl scripts or Python scripts or one to talk to a
+remote server and build a virtual environment and load your stuff into it. The
+possibilities are endless.

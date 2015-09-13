@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+
+# this is the path to where the sources are located on the clone system. this
+# might be something like "/clone/sources" and should be set in config.
+CLONE_BASE_DIR?=/clone/sources
+
+# this is the path to the source directory to use on the clone system. this
+# might be something like "scm/common" and should be set in the project's
+# .scmrc file but you can put a default value here.
+CLONEDIR?=scm/common
+
+# this is the path on the remote system to which the project should be 
+# deployed. this might be something like "/srv/wwwdata" or "/data/apps" and it
+# should be set in the project's .scmrc file but you can set a default value
+# here.
+HOSTDIR?=/srv/wwwdata
+
+# this is the user on the remote system to which we will sudo in order to
+# install the project. this might be something like "wwwdata" or "nobody" or
+# "ops" and should be set in the project's .scmrc file but you can set a
+# default value here.
+HOSTUSER?=wwwdata
+
+# defined commands
+GIT?=git
+TAR?=tar
+RSYNC?=rsync
+SUDO?=sudo
+SSH?=ssh

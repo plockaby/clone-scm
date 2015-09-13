@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+.PHONY: build
+build: mostlyclean pre_build_hook _internal_build _internal_build_copy post_build_hook
+	echo "finished running $@"
+
+.PHONY: pre_build_hook
+pre_build_hook:: mostlyclean
+
+.PHONY: _internal_build
+_internal_build: pre_build_hook
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(RELEASE_DIR)
+	$(RSYNC) $(RSYNC_FLAGS) $(CURDIR)/ $(BUILD_DIR)
+
+.PHONY: _internal_build_copy
+_internal_build_copy: _internal_build $(SUBDIRS:%=_internal_build_copy_%)
+
+# make copies of things defined by DEPLOY_* vars here
+.PHONY: _internal_build_copy_%
+_internal_build_copy_%: %
+	[ ! -d $^ ] || $(RSYNC) $(RSYNC_FLAGS) $^/ $(DEPLOY_$*)
+
+.PHONY: post_build_hook
+post_build_hook:: _internal_build_copy
+
+ifdef SUBDIRS
+.IGNORE: $(SUBDIRS)
+$(SUBDIRS):
+endif

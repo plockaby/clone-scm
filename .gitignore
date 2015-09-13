@@ -1,0 +1,4 @@
+.scm
+.*.swp
+bin/config
+bin/servers

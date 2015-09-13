@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+
+.PHONY: clean
+clean: realclean
+	echo "finished running $@"
+
+# this removes most of the contents of the containment directory but keeps the
+# test output directory for later review.
+.PHONY: mostlyclean
+mostlyclean:
+	[ ! -d $(RELEASE_DIR) ] || rm -rf $(RELEASE_DIR)
+	[ ! -d $(TEMP_DIR) ] || rm -rf $(TEMP_DIR)
+	[ ! -d $(ARCHIVE_DIR) ] || rm -rf $(ARCHIVE_DIR)
+	[ ! -d $(BUILD_DIR) ] || rm -rf $(BUILD_DIR)
+
+# removes all scm generated content
+.PHONY: realclean
+realclean:
+	[ ! -d $(CONTAINMENT_DIR) ] || rm -rf $(CONTAINMENT_DIR)

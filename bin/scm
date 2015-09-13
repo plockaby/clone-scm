@@ -1,0 +1,39 @@
+#!/usr/bin/make -f
+
+# get the location where our script actually exists
+SCM=$(realpath $(firstword $(MAKEFILE_LIST)))
+SCMDIR=$(dir $(SCM))
+
+# Help should be the first target, always.
+.PHONY: help
+help:
+	echo "You must set a target when running 'scm'."
+	echo ""
+	echo "Available targets:"
+	echo "  clean"
+	echo "  build"
+	echo "  test"
+	echo "  archive"
+	echo "  live"
+	echo "  live_*"
+	echo "  clone"
+	echo ""
+	echo "You must have a .scmrc file in your project's root to define what to"
+	echo "build. Modify the 'servers' file to maintain the list of servers"
+	echo "to which you may deploy."
+
+# include configuration
+include $(SCMDIR)/config
+include $(SCMDIR)/servers
+
+# include our actual build script
+# if this does not exist then we want to blow up in everyone's face
+include $(CURDIR)/.scmrc
+
+# incldue the external scripts
+MODULES=$(sort $(wildcard $(SCMDIR)/modules/scm.*))
+include $(MODULES)
+
+# include the plugins
+PLUGINS=$(sort $(wildcard $(SCMDIR)/plugins/scm.*.plugin))
+include $(PLUGINS)

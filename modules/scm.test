@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+.PHONY: test
+test: build pre_test_hook _internal_test post_test_hook
+	echo "finished running $@"
+
+.PHONY: pre_test_hook
+pre_test_hook:: build
+
+.PHONY: _internal_test
+_internal_test: pre_test_hook
+	mkdir -p $(TEST_DIR)
+
+.PHONY: post_test_hook
+post_test_hook:: _internal_test
