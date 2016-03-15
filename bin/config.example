@@ -10,16 +10,16 @@ CLONE_BASE_DIR?=/clone/sources
 CLONEDIR?=scm/common
 
 # this is the path on the remote system to which the project should be 
-# deployed. this might be something like "/srv/wwwdata" or "/data/apps" and it
+# deployed. this might be something like "/srv/data" or "/data/apps" and it
 # should be set in the project's .scmrc file but you can set a default value
 # here.
-HOSTDIR?=/srv/wwwdata
+HOSTDIR?=/srv/data
 
 # this is the user on the remote system to which we will sudo in order to
-# install the project. this might be something like "wwwdata" or "nobody" or
+# install the project. this might be something like "data" or "nobody" or
 # "ops" and should be set in the project's .scmrc file but you can set a
 # default value here.
-HOSTUSER?=wwwdata
+HOSTUSER?=data
 
 # defined commands
 GIT?=git
